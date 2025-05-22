@@ -18,35 +18,67 @@ export default function ConnectWallet() {
   const [error, setError] = useState<string | null>(null)
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [networkName, setNetworkName] = useState<string>("")
+  const [networkName, setNetworkName] = useState<string>("Unknown Network")
   const [copied, setCopied] = useState(false)
+  const [chainId, setChainId] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if MetaMask is installed
-    if (typeof window !== "undefined") {
-      setIsMetaMaskInstalled(!!window.ethereum)
+    const checkMetaMask = async () => {
+      if (typeof window !== "undefined") {
+        const isInstalled = !!window.ethereum
+        setIsMetaMaskInstalled(isInstalled)
+        
+        if (isInstalled) {
+          try {
+            // Check if already connected
+            const accounts = await window.ethereum.request({ method: "eth_accounts" })
+            if (accounts.length > 0) {
+              setAccount(accounts[0])
+              await getChainInfo()
+            }
+            
+            // Setup listeners
+            window.ethereum.on("accountsChanged", handleAccountsChanged)
+            window.ethereum.on("chainChanged", handleChainChanged)
+          } catch (err) {
+            console.error("Error checking MetaMask state:", err)
+          }
+        }
+      }
     }
-
-    // Check if already connected
-    checkConnection()
+    
+    checkMetaMask()
+    
+    // Cleanup
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged)
+        window.ethereum.removeListener("chainChanged", handleChainChanged)
+      }
+    }
   }, [])
 
-  const checkConnection = async () => {
-    if (window.ethereum) {
-      try {
-        // Check if we're already connected
-        const accounts = await window.ethereum.request({ method: "eth_accounts" })
-        if (accounts.length > 0) {
-          setAccount(accounts[0])
-          await getNetworkInfo()
-        }
+  const getChainInfo = async () => {
+    if (!window.ethereum) return
 
-        // Setup event listeners
-        window.ethereum.on("accountsChanged", handleAccountsChanged)
-        window.ethereum.on("chainChanged", handleChainChanged)
-      } catch (err) {
-        console.error("Error checking connection:", err)
+    try {
+      const chainId = await window.ethereum.request({ method: "eth_chainId" })
+      setChainId(chainId)
+      
+      // Map chainId to network name
+      const networks: Record<string, string> = {
+        "0x1": "Ethereum Mainnet",
+        "0x5": "Goerli Testnet",
+        "0xaa36a7": "Sepolia Testnet",
+        "0x89": "Polygon Mainnet",
+        "0x13881": "Mumbai Testnet",
+        "0x1315": "Story Protocol Aeneid Testnet",
+        "0x1514": "Story Protocol Mainnet"
       }
+      
+      setNetworkName(networks[chainId] || `Chain ID: ${parseInt(chainId, 16)}`)
+    } catch (error) {
+      console.error("Error getting chain info:", error)
     }
   }
 
@@ -61,34 +93,13 @@ export default function ConnectWallet() {
   }
 
   const handleChainChanged = () => {
-    // Refresh network info when chain changes
-    getNetworkInfo()
-  }
-
-  const getNetworkInfo = async () => {
-    if (!window.ethereum) return
-
-    try {
-      const chainId = await window.ethereum.request({ method: "eth_chainId" })
-
-      // Map chain ID to network name
-      const networks: Record<string, string> = {
-        "0x1": "Ethereum Mainnet",
-        "0x5": "Goerli Testnet",
-        "0xaa36a7": "Sepolia Testnet",
-        "0x89": "Polygon Mainnet",
-        "0x13881": "Mumbai Testnet",
-      }
-
-      setNetworkName(networks[chainId] || `Chain ID: ${Number.parseInt(chainId, 16)}`)
-    } catch (error) {
-      console.error("Error getting network:", error)
-    }
+    getChainInfo()
+    window.location.reload() // Recommended by MetaMask
   }
 
   const connectWallet = async () => {
-    if (!window.ethereum) {
-      setError("MetaMask is not installed. Please install MetaMask to connect.")
+    if (typeof window === "undefined" || !window.ethereum) {
+      window.open("https://metamask.io/download/", "_blank")
       return
     }
 
@@ -96,13 +107,22 @@ export default function ConnectWallet() {
     setError(null)
 
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
-      setAccount(accounts[0])
-      await getNetworkInfo()
-      setIsDialogOpen(false)
+      await window.ethereum.request({ method: "eth_requestAccounts" })
+        .then((accounts: string[]) => {
+          setAccount(accounts[0])
+          getChainInfo()
+          setIsDialogOpen(false)
+        })
     } catch (err: any) {
-      console.error("Error connecting to MetaMask:", err)
-      setError(err.message || "Failed to connect to wallet")
+      console.error("Error connecting to wallet:", err)
+      // Handle specific MetaMask errors
+      if (err.code === 4001) {
+        setError("Connection rejected. Please approve the connection request in MetaMask.")
+      } else if (err.code === -32002) {
+        setError("Connection request already pending. Please check your MetaMask extension.")
+      } else {
+        setError(err.message || "Failed to connect wallet. Please try again.")
+      }
     } finally {
       setIsConnecting(false)
     }
@@ -114,7 +134,7 @@ export default function ConnectWallet() {
   }
 
   const formatAddress = (address: string) => {
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+    return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
 
   const copyToClipboard = (text: string) => {
@@ -125,17 +145,29 @@ export default function ConnectWallet() {
 
   return (
     <>
-      {account ? (
-        <Button variant="outline" className="glass-button" onClick={() => setIsDialogOpen(true)}>
-          <Wallet className="mr-2 h-4 w-4" />
-          {formatAddress(account)}
-        </Button>
-      ) : (
-        <Button className="bg-primary/90 backdrop-blur-sm" onClick={() => setIsDialogOpen(true)}>
-          <Wallet className="mr-2 h-4 w-4" />
-          Connect Wallet
-        </Button>
-      )}
+      <Button 
+        variant={account ? "outline" : "default"} 
+        onClick={() => account ? setIsDialogOpen(true) : connectWallet()}
+        disabled={isConnecting}
+        className="relative flex items-center"
+      >
+        {isConnecting ? (
+          <>
+            <div className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full"></div>
+            Connecting...
+          </>
+        ) : account ? (
+          <>
+            <div className="mr-2 h-2 w-2 rounded-full bg-green-500"></div>
+            {formatAddress(account)}
+          </>
+        ) : (
+          <>
+            <Wallet className="mr-2 h-4 w-4" />
+            Connect Wallet
+          </>
+        )}
+      </Button>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md glass-effect">
@@ -149,14 +181,51 @@ export default function ConnectWallet() {
           </DialogHeader>
 
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
+          {account ? (
+            <div className="space-y-4">
+              <div className="rounded-lg border p-4">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Account</span>
+                    <span className="font-mono">{formatAddress(account)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Network</span>
+                    <div className="flex items-center">
+                      <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                      <span>{networkName}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={disconnectWallet}
+                >
+                  Disconnect
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button 
+              className="w-full" 
+              onClick={connectWallet} 
+              disabled={isConnecting || !isMetaMaskInstalled}
+            >
+              {isConnecting ? "Connecting..." : "Connect with MetaMask"}
+            </Button>
+          )}
+          
           {!isMetaMaskInstalled && (
-            <Alert>
+            <Alert className="mt-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 MetaMask is not installed. Please{" "}
@@ -167,46 +236,6 @@ export default function ConnectWallet() {
               </AlertDescription>
             </Alert>
           )}
-
-          <div className="flex flex-col space-y-3">
-            {account ? (
-              <>
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Wallet className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Connected to {networkName}</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm text-muted-foreground">{formatAddress(account)}</p>
-                        <button
-                          onClick={() => copyToClipboard(account)}
-                          className="text-primary hover:text-primary/80"
-                          title="Copy address"
-                        >
-                          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={disconnectWallet}>
-                    Disconnect
-                  </Button>
-                </div>
-                <div className="rounded-lg bg-primary/10 p-3 border border-primary/20">
-                  <p className="text-xs text-muted-foreground">
-                    Your wallet is now connected to Story Protocol. You can register and manage your intellectual
-                    property assets.
-                  </p>
-                </div>
-              </>
-            ) : (
-              <Button className="w-full" onClick={connectWallet} disabled={isConnecting || !isMetaMaskInstalled}>
-                {isConnecting ? "Connecting..." : "Connect with MetaMask"}
-              </Button>
-            )}
-          </div>
         </DialogContent>
       </Dialog>
     </>

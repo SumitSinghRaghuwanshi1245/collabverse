@@ -2,6 +2,18 @@
 
 import { ethers } from "ethers"
 
+// Add TypeScript declaration for window.ethereum
+declare global {
+  interface Window {
+    ethereum?: {
+      isMetaMask?: boolean;
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on: (eventName: string, callback: (...args: any[]) => void) => void;
+      removeListener: (eventName: string, callback: (...args: any[]) => void) => void;
+    };
+  }
+}
+
 // Story Protocol IP Asset Registry Interface
 const IP_ASSET_REGISTRY_ABI = [
   "function registerIpAsset(address owner, string memory tokenURI, bytes memory data) external returns (uint256)",

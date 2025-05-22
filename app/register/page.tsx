@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { GradientBackground } from "@/components/ui/gradient-background"
+
 import { GlassCard } from "@/components/ui/glass-card"
 import Navbar from "@/components/navbar"
 import { Button } from "@/components/ui/button"
@@ -237,7 +237,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <GradientBackground />
+      
       <Navbar />
       <main className="flex-1">
         <section className="container py-12 md:py-16 lg:py-20">

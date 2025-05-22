@@ -1,4 +1,4 @@
-import type * as React from "react"
+import React from "react";
 
 export function AudioWaveIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -14,9 +14,12 @@ export function AudioWaveIcon(props: React.SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M2 12h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h12" />
-      <path d="M22 12h-2a2 2 0 0 1-2-2V6a2 2 0 0 0-2-2H4" />
-      <path d="M4 12a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3" />
+      <path d="M2 10v3" />
+      <path d="M6 6v11" />
+      <path d="M10 3v18" />
+      <path d="M14 8v7" />
+      <path d="M18 5v13" />
+      <path d="M22 10v3" />
     </svg>
-  )
+  );
 }

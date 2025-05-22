@@ -24,7 +24,7 @@ const contentIdeas = [
   {
     trend: "AI Ethics",
     title: "5 Ethical Considerations for AI Implementation",
-    description: "Explore the key ethical considerations businesses should make when implementing AI solutions.",
+    description: "discover the key ethical considerations businesses should make when implementing AI solutions.",
     engagement: "High",
     platforms: ["LinkedIn", "X"],
   },
@@ -32,7 +32,7 @@ const contentIdeas = [
     trend: "Sustainable Tech",
     title: "How Green Technology is Reshaping Business Operations",
     description:
-      "Discover how sustainable technology is helping businesses reduce their carbon footprint while improving efficiency.",
+      "discover how sustainable technology is helping businesses reduce their carbon footprint while improving efficiency.",
     engagement: "Medium",
     platforms: ["LinkedIn", "Instagram"],
   },

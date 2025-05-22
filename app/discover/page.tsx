@@ -2,23 +2,22 @@ import Link from "next/link"
 import { ArrowRight, Filter, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { GradientBackground } from "@/components/ui/gradient-background"
 import { GlassCard } from "@/components/ui/glass-card"
 import { AudioWaveIcon } from "@/components/ui/audio-wave-icon"
 import Navbar from "@/components/navbar"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
-export default function DiscoverPage() {
+export default function discoverPage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <GradientBackground />
+     
       <Navbar />
       <main className="flex-1">
         <section className="container py-12 md:py-16 lg:py-20">
           <div className="mx-auto max-w-[58rem] space-y-4 text-center">
             <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl gradient-text">
-              Discover Intellectual Property
+              discover Intellectual Property
             </h1>
             <p className="max-w-[42rem] mx-auto leading-normal text-muted-foreground sm:text-xl sm:leading-8 glass-effect p-4 rounded-lg">
               Browse our marketplace of registered intellectual property rights available for licensing and purchase.
