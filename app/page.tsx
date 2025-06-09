@@ -109,9 +109,9 @@ export default function Home() {
                   <BarChart3 className="h-6 w-6 text-primary" />
                 </div>
                 <div className="space-y-2 pt-6">
-                  <h3 className="font-bold">Sentiment-Based Scheduling</h3>
+                  <h3 className="font-bold">Register</h3>
                   <p className="text-sm text-muted-foreground">
-                    Analyze real-time sentiment to automatically adjust content timing and tone based on audience mood.
+                  Securely register your original IP content on-chain as an NFT, proving authorship and timestamp with Story Protocol integration.
                   </p>
                 </div>
               </GlassCard>
@@ -120,9 +120,9 @@ export default function Home() {
                   <Repeat className="h-6 w-6 text-primary" />
                 </div>
                 <div className="space-y-2 pt-6">
-                  <h3 className="font-bold">Platform-Specific Adaptation</h3>
+                  <h3 className="font-bold">Discover</h3>
                   <p className="text-sm text-muted-foreground">
-                    Automatically tailor content for each platform's unique style, format, and audience expectations.
+                  Explore a decentralized library of registered works, enabling transparent visibility and verification of creative assets.
                   </p>
                 </div>
               </GlassCard>
@@ -131,9 +131,9 @@ export default function Home() {
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <div className="space-y-2 pt-6">
-                  <h3 className="font-bold">Predictive Trend Integration</h3>
+                  <h3 className="font-bold">Remix</h3>
                   <p className="text-sm text-muted-foreground">
-                    Identify emerging trends before they peak and generate relevant content ideas to capitalize on them.
+                  Collaborate or build upon existing IP legally, track contributions, and share royalties automatically using smart contracts.
                   </p>
                 </div>
               </GlassCard>
@@ -152,11 +152,12 @@ export default function Home() {
               {featuredIPs.map((ip) => (
                 <GlassCard key={ip.id} className="overflow-hidden">
                   <div>
-                    <img 
-                      src={ip.image} 
-                      alt={ip.title}
-                      className="w-full h-40 object-cover rounded-md mb-4"
-                    />
+                    <div className="w-full h-40 bg-gradient-to-r from-primary/30 to-primary/10 rounded-md mb-4 flex items-center justify-center">
+                      <div className="text-center">
+                        <AudioWaveIcon className="h-10 w-10 mx-auto mb-2 text-primary/80" />
+                        <div className="text-sm font-medium text-primary/90">{ip.id}</div>
+                      </div>
+                    </div>
                     <h3 className="text-xl font-semibold mb-2">{ip.title}</h3>
                     <p className="text-sm text-muted-foreground mb-4 h-12 overflow-hidden">
                       {ip.description}

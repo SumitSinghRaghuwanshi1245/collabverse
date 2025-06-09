@@ -148,53 +148,53 @@ export default function RemixPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {/* IP Asset Details */}
             <GlassCard>
-              <img 
-                src={selectedIP.image} 
-                alt={selectedIP.title}
-                className="w-full h-48 object-cover rounded-md mb-4"
-              />
-              <h2 className="text-xl font-semibold mb-2">{selectedIP.title}</h2>
-              <p className="text-sm text-white/70 mb-4">{selectedIP.description}</p>
+              <div className="p-4 bg-gradient-to-r from-primary/20 to-primary/10 rounded-t-md border-b border-white/10">
+                <h2 className="text-xl font-semibold text-center">{selectedIP.title}</h2>
+                <p className="text-sm text-center text-white/70 mt-2">{selectedIP.type}</p>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-white/70 mb-4">{selectedIP.description}</p>
               
-              <div className="space-y-2 border-t border-white/10 pt-4 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">Owner</span>
-                  <span>{selectedIP.owner}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">Type</span>
-                  <span>{selectedIP.type}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">License</span>
-                  <span>{selectedIP.license}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">Royalty</span>
-                  <span>{selectedIP.royalty}%</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">Created</span>
-                  <span>{selectedIP.creationDate}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/60">License Fee</span>
-                  <div className="text-right">
-                    <div>{selectedIP.pricePerDay} ETH per day</div>
-                    <div className="text-xs text-white/40">≈ ${(selectedIP.pricePerDay * ethPrice).toFixed(2)} USD</div>
+                <div className="space-y-2 border-t border-white/10 pt-4 mb-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Owner</span>
+                    <span>{selectedIP.owner}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Type</span>
+                    <span>{selectedIP.type}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">License</span>
+                    <span>{selectedIP.license}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Royalty</span>
+                    <span>{selectedIP.royalty}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Created</span>
+                    <span>{selectedIP.creationDate}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">License Fee</span>
+                    <div className="text-right">
+                      <div>{selectedIP.pricePerDay} ETH per day</div>
+                      <div className="text-xs text-white/40">≈ ${(selectedIP.pricePerDay * ethPrice).toFixed(2)} USD</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full"
-                onClick={() => setIsGuidelinesOpen(true)}
-              >
-                <Info className="h-4 w-4 mr-2" />
-                View Usage Guidelines
-              </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => setIsGuidelinesOpen(true)}
+                >
+                  <Info className="h-4 w-4 mr-2" />
+                  View Usage Guidelines
+                </Button>
+              </div>
             </GlassCard>
 
             {/* Usage Terms & Payment */}

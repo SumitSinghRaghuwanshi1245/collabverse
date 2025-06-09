@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { PlusCircle, Trash2, AlertCircle, Upload, FileText, Music, Video, ImageIcon, File } from "lucide-react"
+import { PlusCircle, Trash2, AlertCircle, Upload, FileText, Music, Video, ImageIcon, File, FileCheck } from "lucide-react"
 import { AudioWaveIcon } from "@/components/ui/audio-wave-icon"
 import Link from "next/link"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -163,11 +163,12 @@ export default function RegisterPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-center">
                       {filePreview ? (
-                        <img
-                          src={filePreview || "/placeholder.svg"}
-                          alt="Preview"
-                          className="max-h-40 max-w-full rounded"
-                        />
+                        <div className="bg-gradient-to-r from-primary/30 to-primary/10 p-5 rounded max-w-full max-h-40 flex items-center justify-center">
+                          <div className="text-center">
+                            <FileCheck className="h-10 w-10 text-primary/80" />
+                            <div className="text-sm mt-2 font-medium text-primary/90">File Preview</div>
+                          </div>
+                        </div>
                       ) : (
                         <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
                           {fileUploaded.type.startsWith("audio/") ? (
